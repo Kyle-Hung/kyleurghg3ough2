@@ -1,0 +1,98 @@
+from djitellopy import Tello
+import time
+
+# Initialize the drone
+drone = Tello()
+try:
+    drone.connect()
+
+    # Enable mission pad detection
+    drone.enable_mission_pads()
+    drone.set_mission_pad_detection_direction(2)  # Detect mission pads in all directions
+
+    print(f"Battery: {drone.get_battery()}%")
+
+    print("Taking off...")
+    drone.takeoff()
+
+    # Move up slightly to ensure clear sensor reading
+    drone.move_up(20)
+
+    # Search for Mission Pad 1
+    print("Searching for Mission Pad 1...")
+    while True:
+        pad_id = drone.get_mission_pad_id()
+        if pad_id == 1:  # Mission Pad 1 detected
+            print("Mission Pad 1 detected. Aligning.....")
+            drone.go_xyz_speed_mid(x=0, y=0, z=70, speed=10, mid=1)
+            time.sleep(3)
+            print("X position:", drone.get_mission_pad_distance_x())
+            print("Y position:", drone.get_mission_pad_distance_y())
+            print("Z position:", drone.get_mission_pad_distance_z())
+
+            drone.go_xyz_speed_mid(x=0, y=0, z=50, speed=10, mid=1)
+            time.sleep(3)
+            print("X position:", drone.get_mission_pad_distance_x())
+            print("Y position:", drone.get_mission_pad_distance_y())
+            print("Z position:", drone.get_mission_pad_distance_z())
+
+            drone.go_xyz_speed_mid(x=0, y=0, z=70, speed=10, mid=1)
+            time.sleep(3)
+            print("X position:", drone.get_mission_pad_distance_x())
+            print("Y position:", drone.get_mission_pad_distance_y())
+            print("Z position:", drone.get_mission_pad_distance_z())
+
+            drone.go_xyz_speed_mid(x=0, y=0, z=50, speed=10, mid=1)
+            time.sleep(3)
+            print("X position:", drone.get_mission_pad_distance_x())
+            print("Y position:", drone.get_mission_pad_distance_y())
+            print("Z position:", drone.get_mission_pad_distance_z())
+
+            drone.go_xyz_speed_mid(x=0, y=0, z=70, speed=10, mid=1)
+            time.sleep(3)
+            print("X position:", drone.get_mission_pad_distance_x())
+            print("Y position:", drone.get_mission_pad_distance_y())
+            print("Z position:", drone.get_mission_pad_distance_z())
+
+            drone.go_xyz_speed_mid(x=0, y=0, z=50, speed=10, mid=1)
+            time.sleep(3)
+            print("X position:", drone.get_mission_pad_distance_x())
+            print("Y position:", drone.get_mission_pad_distance_y())
+            print("Z position:", drone.get_mission_pad_distance_z())
+
+            drone.go_xyz_speed_mid(x=0, y=0, z=100, speed=10, mid=1)
+            time.sleep(3)
+
+            # Move forward 35 cm after detecting first mission pad
+            print("Moving forward 35 cm...")
+            drone.move_forward(35)
+            time.sleep(2)
+
+            # Search for another Mission Pad
+            print("Searching for another Mission Pad...")
+            while True:
+                pad_id = drone.get_mission_pad_id()
+                if pad_id == 2:  # Another Mission Pad detected
+                    drone.move_down(50)
+                    drone.move_forward(20)
+                    drone.move_up(70)
+                    drone.move_forward(20)
+                else:
+                    drone.move_forward(30)  # Continue searching for the second pad
+                    time.sleep(1)
+
+            
+        else:
+            drone.move_forward(30)  # Move forward incrementally to search for the first pad
+            time.sleep(1)
+
+    
+
+except Exception as e:
+    print(f"An error occurred: {e}")
+    drone.land()
+
+finally:
+    # Disable mission pad detection and disconnect
+    drone.disable_mission_pads()
+    drone.end()
